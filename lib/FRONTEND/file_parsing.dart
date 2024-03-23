@@ -1,5 +1,5 @@
 import 'dart:ffi';
-import 'hel.dart';
+import '../LINKER/connect.dart';
 
 class userData {
   late String ID;
@@ -56,7 +56,7 @@ class userData {
 List<userData> getProductData() {
   List<userData> userdata = [];
   Pointer<DatabaseHandler>? dbhandler =
-      getSqliteConnection("lib/example.db", "product");
+      getSqliteConnection("lib/./DATABASE/example.db", "product");
   print(dbhandler.hashCode);
   String data = getDataSqlite(dbhandler, '|');
   while (data != '|') {

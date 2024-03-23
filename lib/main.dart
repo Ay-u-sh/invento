@@ -3,8 +3,8 @@ import 'home_page.dart';
 import 'dart:ffi';
 // By Ayush Bhande, Ayush Bhardwaj, Devesh Phulara, Divesh Mittal
 void main() {
-  DynamicLibrary.open('lib/sqlite3.dll');
-  DynamicLibrary.open('lib/libdesign.dll');
+  DynamicLibrary.open('lib/BACKEND/DLL/sqlite3.dll');
+  DynamicLibrary.open('lib/BACKEND/DLL/libdesign.dll');
   runApp(const MyApp());
 }
 

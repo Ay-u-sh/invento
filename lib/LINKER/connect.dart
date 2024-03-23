@@ -1,7 +1,7 @@
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 
-final dylib = DynamicLibrary.open('libdesign.dll');
+final dylib = DynamicLibrary.open('lib/BACKEND/DLL/libdesign.dll');
 int tryLimit = 10;
 
 final class DatabaseHandler extends Struct {
@@ -56,7 +56,7 @@ typedef InsertCSVSqliteDart = bool Function(
 
 bool insertCSVSqlite(String filename, String dbfilename, String tablename) {
   Pointer<Utf8> fn = filename.toNativeUtf8();
-  Pointer<Utf8> db = tablename.toNativeUtf8();
+  Pointer<Utf8> db = dbfilename.toNativeUtf8();
   Pointer<Utf8> tn = tablename.toNativeUtf8();
 
   final InsertCSVSqliteDart insertCSVSqliteDart = dylib

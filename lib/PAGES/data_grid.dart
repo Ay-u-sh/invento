@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
-import 'file_parsing.dart';
-import 'top_selling.dart';
-import 'low_stock.dart';
+import '../FRONTEND/file_parsing.dart';
+import '../FRONTEND/top_selling.dart';
+import '../FRONTEND/low_stock.dart';
 
 class MyHomePage extends StatefulWidget {
 

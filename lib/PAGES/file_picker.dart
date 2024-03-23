@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-
+import '../LINKER/connect.dart';
 class File_picker extends StatelessWidget {
   const File_picker({super.key});
 
@@ -26,8 +26,8 @@ class File_picker extends StatelessWidget {
     final File pickedFile = File(filePath);
     final username = name;
     String currentDirectory = Directory.current.path;
-    final String savePath = '$currentDirectory/lib/$username';
-
+    final String savePath = '$currentDirectory/lib/File_UPLOAD/$username';
+    insertCSVSqlite(savePath, "lib/./DATABASE/example.db", "product");
     // Copy the file to the desired location
     await pickedFile.copy(savePath);
   }
