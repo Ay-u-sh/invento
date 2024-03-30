@@ -30,6 +30,7 @@ analysis_options.yaml
 .pub-cache/
 .pub/
 /build/
+.vscode
 
 # Symbolication related
 app.*.symbols

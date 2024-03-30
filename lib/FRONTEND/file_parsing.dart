@@ -57,13 +57,11 @@ List<userData> getProductData() {
   List<userData> userdata = [];
   Pointer<DatabaseHandler>? dbhandler =
       getSqliteConnection("lib/./DATABASE/example.db", "product");
-  print(dbhandler.hashCode);
   String data = getDataSqlite(dbhandler, '|');
   while (data != '|') {
     userdata.add(userData(data));
     data = getDataSqlite(dbhandler, '|');
   }
   dbhandler = closeSqliteConnection(dbhandler);
-  print(dbhandler.hashCode);
   return userdata;
 }
