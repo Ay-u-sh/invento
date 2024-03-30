@@ -1,8 +1,21 @@
 import 'dart:ffi';
+import 'dart:io';
 import 'package:ffi/ffi.dart';
 
-final dylib = DynamicLibrary.open('lib/BACKEND/DLL/libdesign.dll');
-int tryLimit = 10;
+DynamicLibrary loadDynamicLibrary() {
+  dynamic lib;
+  if (Platform.isMacOS) {
+    DynamicLibrary.open('lib/BACKEND/DLL/sqlite3.dylib');
+    lib = DynamicLibrary.open('lib/BACKEND/DLL/libdesign.dylib');
+  } else if (Platform.isWindows) {
+    DynamicLibrary.open('lib/BACKEND/DLL/sqlite3.dll');
+    lib =  DynamicLibrary.open('lib/BACKEND/DLL/libdesign.dll');
+    // lib = DynamicLibrary.open('lib/BACKEND/DLL/liberrordesign.dll');
+  }
+  return lib;
+}
+
+final dylib = loadDynamicLibrary();
 
 final class DatabaseHandler extends Struct {
   external Pointer<DatabaseHandler> p;

@@ -1,3 +1,4 @@
+#include<iostream>
 #include<vector>
 #include<fstream>
 #include<cstring>
@@ -21,8 +22,10 @@ class InventoryData : public StructuredData{
         int capacity = 5;
     public:
         bool organizeData(vector<string> data){
-            if(data.size()!=capacity)
+            if(data.size()!=capacity){
+                cout<<"Structured Data capacity not equal to data.size()"<<endl;
                 return false;
+            }
             for(int i = 0;i<data.size();i++){
                 switch(i){
                     case 0:
@@ -82,6 +85,7 @@ class CSVFileParser : public FileParser{
     public:
         CSVFileParser(const string name):file_name(name){
             file.open(file_name,ios::in);
+            if(!file.is_open()) cout<<"cannot open file"<<endl;
         }
         ~CSVFileParser(){
             if(file.is_open()) file.close();
@@ -128,6 +132,7 @@ class SQLiteHandler : public DatabaseHandler{
             if(stmt_state == NULL){
                 if(sqlite3_prepare_v2(con,query.c_str(),-1,&stmt_state,NULL) == SQLITE_OK) return true;
                 else{
+                    cout<<sqlite3_errmsg(con)<<endl;
                     sqlite3_finalize(stmt_state);
                     stmt_state = NULL;
                     return false;
@@ -139,23 +144,32 @@ class SQLiteHandler : public DatabaseHandler{
         bool processInsertData(vector<StructuredData*> &data){
             int result_code;
             for(int i = 0;i<data.size();i++){
-                sqlite3_bind_int(get_insert_data_stmt_state,1,stoi(data[i]->getDataValue()));
+                int id = stoi(data[i]->getDataValue());
+                string name = data[i]->getDataValue();
+                int price = stoi(data[i]->getDataValue());
+                string brand = data[i]->getDataValue();
+                int quantity = stoi(data[i]->getDataValue());
+                cout<<id<<"|"<<name<<"|"<<price<<"|"<<brand<<"|"<<quantity<<endl;
+                if(sqlite3_bind_int(get_insert_data_stmt_state,1,id) != SQLITE_OK) cout<<sqlite3_errmsg(con)<<endl;
                 
-                sqlite3_bind_text(get_insert_data_stmt_state,2,data[i]->getDataValue().c_str(),-1,SQLITE_STATIC);
+                if(sqlite3_bind_text(get_insert_data_stmt_state,2,name.c_str(),-1,SQLITE_STATIC) != SQLITE_OK) cout<<sqlite3_errmsg(con)<<endl;
                 
-                sqlite3_bind_int(get_insert_data_stmt_state,3,stoi(data[i]->getDataValue()));
+                if(sqlite3_bind_int(get_insert_data_stmt_state,3,price) != SQLITE_OK) cout<<sqlite3_errmsg(con)<<endl;
                 
-                sqlite3_bind_text(get_insert_data_stmt_state,4,data[i]->getDataValue().c_str(),-1,SQLITE_STATIC);
+                if(sqlite3_bind_text(get_insert_data_stmt_state,4,brand.c_str(),-1,SQLITE_STATIC) != SQLITE_OK) cout<<sqlite3_errmsg(con)<<endl;
                 
-                sqlite3_bind_int(get_insert_data_stmt_state,5,stoi(data[i]->getDataValue()));
+                if(sqlite3_bind_int(get_insert_data_stmt_state,5,quantity) != SQLITE_OK) cout<<sqlite3_errmsg(con)<<endl;
                
                 result_code = sqlite3_step(get_insert_data_stmt_state);
-
+                cout<<"iteration->"<<i<<"result code ->"<<result_code<<endl;
+                
                 sqlite3_clear_bindings(get_insert_data_stmt_state);
                 sqlite3_reset(get_insert_data_stmt_state);
 
-                if(result_code != SQLITE_DONE)
+                if(result_code != SQLITE_DONE){
+                    cout<<sqlite3_errmsg(con)<<endl;
                     return false;
+                }
             }
             return true;
         }
@@ -177,9 +191,10 @@ class SQLiteHandler : public DatabaseHandler{
             else if(result_code == SQLITE_DONE)
                 sqlite3_reset(stmt_state);
             else{
+                cout<<"result_code:"<<result_code<<" "<<"sqlitedone:"<<SQLITE_DONE<<" "<<"sqliterow:"<<SQLITE_ROW<<endl;
+                cout<<sqlite3_errmsg(con)<<endl;
                 sqlite3_reset(stmt_state);
-                return false; 
-            }  
+            }
             return true;
         }
 
@@ -187,6 +202,7 @@ class SQLiteHandler : public DatabaseHandler{
         SQLiteHandler(const string db_file_name,const string table_name):table_name(table_name),db_file_name(db_file_name){
             if(sqlite3_open(db_file_name.c_str(),&con) == SQLITE_OK);
             else{
+                cout<<sqlite3_errmsg(con);
                 sqlite3_close(con);
                 con = NULL;
             }
@@ -214,10 +230,14 @@ class SQLiteHandler : public DatabaseHandler{
             
             bool result_code_prepare = prepareQuery(query,get_insert_data_stmt_state);
             bool result_process_data;
-
-            if(!result_code_prepare || !(result_process_data = processInsertData(data)))
-                return false;
             
+            if(!result_code_prepare) cout<<sqlite3_errmsg(con)<<endl;
+            if(!(result_process_data = processInsertData(data))){
+                cout<<"Process Insert Data Failed"<<endl;
+                return false;
+            }
+    
+            sqlite3_reset(get_data_stmt_state);
             return true;
         }
 
@@ -228,7 +248,7 @@ class SQLiteHandler : public DatabaseHandler{
 
             if(!prepareQuery(query,get_data_stmt_state)) return data;
 
-            processResultData(data,get_data_stmt_state);
+            if(!processResultData(data,get_data_stmt_state)) cout<<"error in process result data getData()"<<endl;
             
             return data;
         }
@@ -239,7 +259,7 @@ class SQLiteHandler : public DatabaseHandler{
 
             if(!prepareQuery(query,get_top_selling_stmt_state)) return data;
             
-            processResultData(data,get_top_selling_stmt_state);
+            if(!processResultData(data,get_top_selling_stmt_state)) cout<<"error in process result data getTopSelling()"<<endl;  
         
             return data;
         }
@@ -250,7 +270,7 @@ class SQLiteHandler : public DatabaseHandler{
         
             if(!prepareQuery(query,get_low_stock_stmt_state)) return data;
 
-            processResultData(data,get_low_stock_stmt_state);
+            if(!processResultData(data,get_low_stock_stmt_state)) cout<<"error in process result data getLowStock()"<<endl;
     
             return data;
         }
@@ -302,9 +322,12 @@ extern "C"{
                 return false;
             }
         }
+        cout<<"Parsed csv objects size : "<<data.size()<<endl;
         DatabaseHandler* db_handler = new SQLiteHandler(reinterpret_cast<const char*>(db_file_name),reinterpret_cast<const char*>(table_name));
-        if(!db_handler->insertData(data))
+        if(!db_handler->insertData(data)){
+            cout<<"Data Insertion failed"<<endl;
             return false;
+        }
         for(int i=0;i<data.size();i++){
             delete data[i];
             data.clear();

@@ -2,6 +2,18 @@ import "package:flutter/material.dart";
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import '../LINKER/connect.dart';
+
+String changeSlashes(String str) {
+  String x = "";
+  for (int i = 0; i < str.length; i++) {
+    if (str[i] == '\\')
+      x += '/';
+    else
+      x += str[i];
+  }
+  return x;
+}
+
 class File_picker extends StatelessWidget {
   const File_picker({super.key});
 
@@ -24,12 +36,16 @@ class File_picker extends StatelessWidget {
 
   Future<void> saveFile(String filePath, String name) async {
     final File pickedFile = File(filePath);
-    final username = name;
+    final filename = name;
+    
     String currentDirectory = Directory.current.path;
-    final String savePath = '$currentDirectory/lib/File_UPLOAD/$username';
-    insertCSVSqlite(savePath, "lib/./DATABASE/example.db", "product");
-    // Copy the file to the desired location
-    await pickedFile.copy(savePath);
+    String modifiedDirectory = changeSlashes(currentDirectory);
+    
+    final String file = '$modifiedDirectory/lib/FILE_UPLOAD/$filename';
+    final String database = '$modifiedDirectory/lib/DATABASE/example.db';
+    
+    await pickedFile.copy(file);
+    insertCSVSqlite(file, database, "product");
   }
 
   @override
