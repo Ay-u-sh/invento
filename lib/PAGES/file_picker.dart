@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-import '../LINKER/connect.dart';
+import '../Linker/connect.dart';
 
 String changeSlashes(String str) {
   String x = "";

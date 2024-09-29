@@ -2,14 +2,14 @@ import 'dart:ffi';
 import 'dart:io';
 import 'package:ffi/ffi.dart';
 
-DynamicLibrary loadDynamicLibrary() {
+DynamicLibrary loadDynamicLibrary(){
   dynamic lib;
   if (Platform.isMacOS) {
     DynamicLibrary.open('lib/BACKEND/DLL/sqlite3.dylib');
     lib = DynamicLibrary.open('lib/BACKEND/DLL/libdesign.dylib');
   } else if (Platform.isWindows) {
     DynamicLibrary.open('lib/BACKEND/DLL/sqlite3.dll');
-    lib =  DynamicLibrary.open('lib/BACKEND/DLL/libdesign.dll');
+    lib = DynamicLibrary.open('lib/BACKEND/DLL/libdesign.dll');
     // lib = DynamicLibrary.open('lib/BACKEND/DLL/liberrordesign.dll');
   }
   return lib;
@@ -30,6 +30,7 @@ Pointer<DatabaseHandler> getSqliteConnection(
     String dbfilename, String tablename) {
   Pointer<Utf8> fn = dbfilename.toNativeUtf8();
   Pointer<Utf8> tb = tablename.toNativeUtf8();
+
   final GetSqliteConnectionDart getSqliteConnectionDart =
       dylib.lookupFunction<GetSqliteConnectionDart, GetSqliteConnectionC>(
           'getSQLiteConnection');

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'PAGES/data_grid.dart';
-import 'PAGES/file_picker.dart';
+import 'Pages/data_grid.dart';
+import 'Pages/file_picker.dart';
 
 class HomePage1 extends StatefulWidget {
   @override
