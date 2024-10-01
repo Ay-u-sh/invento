@@ -43,6 +43,4 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-lib/Backend/infinity
-/lib/Backend/errordesign.cpp
-/lib/Backend/design.cpp
+/lib/Backend/infinity
